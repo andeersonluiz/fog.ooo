@@ -13,7 +13,7 @@
             "args": [
                 "-d",
                 "chrome",
-                "--web-renderer=html"
+                "--web-renderer=html",
             ]
         },
     ]

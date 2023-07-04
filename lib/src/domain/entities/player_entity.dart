@@ -12,6 +12,7 @@ class Player extends Equatable {
   final String pos;
   final int age;
   final int matches;
+  final bool playedTeam;
   final int goals;
   final List<Club> clubHistory;
   final String imageUrl;
@@ -28,6 +29,7 @@ class Player extends Equatable {
       required this.age,
       required this.matches,
       required this.goals,
+      required this.playedTeam,
       required this.clubHistory,
       required this.imageUrl,
       required this.caseSearch,
@@ -45,6 +47,7 @@ class Player extends Equatable {
       pos,
       age,
       matches,
+      playedTeam,
       goals,
       clubHistory,
       imageUrl,

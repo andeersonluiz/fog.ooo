@@ -15,6 +15,7 @@ class PlayerModel extends Equatable {
   final String pos;
   final int age;
   final int matches;
+  final bool playedTeam;
   final int goals;
   final List<ClubModel> clubHistory;
   final String imageUrl;
@@ -30,6 +31,7 @@ class PlayerModel extends Equatable {
       required this.pos,
       required this.age,
       required this.matches,
+      required this.playedTeam,
       required this.goals,
       required this.clubHistory,
       required this.imageUrl,
@@ -46,6 +48,7 @@ class PlayerModel extends Equatable {
     String? pos,
     int? age,
     int? matches,
+    bool? playedTeam,
     int? goals,
     List<ClubModel>? clubHistory,
     String? imageUrl,
@@ -62,6 +65,7 @@ class PlayerModel extends Equatable {
         pos: pos ?? this.pos,
         age: age ?? this.age,
         matches: matches ?? this.matches,
+        playedTeam: this.playedTeam,
         goals: goals ?? this.goals,
         clubHistory: clubHistory ?? this.clubHistory,
         imageUrl: imageUrl ?? this.imageUrl,
@@ -79,6 +83,7 @@ class PlayerModel extends Equatable {
       'nationality': nationality.toMap(),
       'pos': pos,
       'age': age,
+      'playedTeam': playedTeam,
       'matches': matches,
       'goals': goals,
       'clubHistory': clubHistory.map((x) => x.toMap()).toList(),
@@ -90,6 +95,10 @@ class PlayerModel extends Equatable {
   }
 
   factory PlayerModel.fromMap(Map<String, dynamic> map) {
+    int age = map['age'] as int;
+    if (age == -1) {
+      age = 500;
+    }
     return PlayerModel(
         id: map['id'] as int,
         name: map['name'] as String,
@@ -98,7 +107,8 @@ class PlayerModel extends Equatable {
         nationality: NationalityModel.fromMap(
             map['nationality'] as Map<String, dynamic>),
         pos: map['pos'] as String,
-        age: map['age'] as int,
+        age: age,
+        playedTeam: map['playedTeam'] as bool,
         matches: map['matches'] as int,
         goals: map['goals'] as int,
         clubHistory: List<ClubModel>.from(
@@ -131,6 +141,7 @@ class PlayerModel extends Equatable {
       pos,
       age,
       matches,
+      playedTeam,
       goals,
       clubHistory,
       imageUrl,

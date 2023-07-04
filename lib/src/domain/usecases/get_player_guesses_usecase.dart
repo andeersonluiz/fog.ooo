@@ -1,7 +1,5 @@
 import 'package:fogooo/src/domain/entities/player_entity.dart';
 import 'package:fogooo/src/domain/repositories/player_repository.dart';
-
-import '../../core/resources/data_state.dart';
 import '../../core/resources/no_param_usecase.dart';
 
 class GetAllPlayerGuessesUseCase implements NoParamUseCase<List<Player>> {

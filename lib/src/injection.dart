@@ -2,10 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:fogooo/src/core/resources/data_state.dart';
 import 'package:fogooo/src/data/datasource/local/local_preferences.dart';
 import 'package:fogooo/src/data/datasource/remote/supabase_handler.dart';
+import 'package:fogooo/src/data/mappers/history_mapper.dart';
 import 'package:fogooo/src/data/mappers/player_mapper.dart';
 import 'package:fogooo/src/data/repositories/player_repository_impl.dart';
 import 'package:fogooo/src/domain/repositories/player_repository.dart';
 import 'package:fogooo/src/domain/usecases/add_player_guesses_usecase.dart';
+import 'package:fogooo/src/domain/usecases/get_order_number_usecase.dart';
+import 'package:fogooo/src/domain/usecases/get_user_history_usecase.dart';
+import 'package:fogooo/src/domain/usecases/send_feedback_usecase.dart';
+import 'package:fogooo/src/domain/usecases/set_user_history_usecase.dart';
 import 'package:fogooo/src/domain/usecases/talvez%20remover/get_all_players_usecase.dart';
 import 'package:fogooo/src/domain/usecases/get_player_guesses_usecase.dart';
 import 'package:fogooo/src/domain/usecases/talvez%20remover/get_sorted_player_usecase.dart';
@@ -19,8 +24,8 @@ _loadData(PlayerRepository playerRepository,
     LocalPreferences localPreferences) async {
   try {
     await localPreferences.init();
-    var versionNumberResult = await playerRepository.getVersionNumber();
 
+    var versionNumberResult = await playerRepository.getVersionNumber();
     if (versionNumberResult is DataSucess) {
       int oldVersionNumber = localPreferences.getVersionNumber();
       int newVersionNumber = versionNumberResult.data!;
@@ -49,8 +54,6 @@ _loadData(PlayerRepository playerRepository,
     }
     return [];
   } catch (e) {
-    //return throw Exception(
-    //    'Erro ao carregar dados, tente novamente mais tarde');
     return Future.error('Erro ao carregar dados, tente novamente mais tarde');
   }
   //print(playerRepository.getAllPlayersLocal()[0]);
@@ -73,8 +76,11 @@ class Injector extends StatelessWidget {
           create: (context) => LocalPreferences(),
         ),
         Provider<PlayerRepository>(
-          create: (context) => PlayerRepositoryImpl(SupabaseHandler(),
-              PlayerMapper(), context.read<LocalPreferences>()),
+          create: (context) => PlayerRepositoryImpl(
+              SupabaseHandler(),
+              PlayerMapper(),
+              HistoryMapper(),
+              context.read<LocalPreferences>()),
         ),
         Provider<GetSortedPlayerUseCase>(
           create: (context) =>
@@ -100,6 +106,22 @@ class Injector extends StatelessWidget {
           create: (context) =>
               GetAllPlayerLocalUseCase(context.read<PlayerRepository>()),
         ),
+        Provider<GetUserHistoryUseCase>(
+          create: (context) =>
+              GetUserHistoryUseCase(context.read<PlayerRepository>()),
+        ),
+        Provider<SetUserHistoryUseCase>(
+          create: (context) =>
+              SetUserHistoryUseCase(context.read<PlayerRepository>()),
+        ),
+        Provider<SendFeedbackUseCase>(
+          create: (context) =>
+              SendFeedbackUseCase(context.read<PlayerRepository>()),
+        ),
+        Provider<GetOrderNumberUseCase>(
+          create: (context) =>
+              GetOrderNumberUseCase(context.read<PlayerRepository>()),
+        ),
       ],
       child: Builder(builder: (context) {
         return FutureBuilder(
@@ -109,11 +131,22 @@ class Injector extends StatelessWidget {
             if (snp.hasData) {
               return child;
             } else if (snp.hasError) {
-              print("ooi ${snp.hasError}");
-              return CustomErrorWidget(
+              return const CustomErrorWidget(
                   msg: "Erro ao carregar dados, tente novamente mais tarde");
             } else {
-              return CircularProgressIndicator();
+              return Container(
+                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
+                  decoration: const BoxDecoration(
+                      image: DecorationImage(
+                          image: AssetImage(
+                            "assets/bg_bota.png",
+                          ),
+                          fit: BoxFit.cover)),
+                  child: const Center(
+                      child: CircularProgressIndicator(
+                    color: Colors.white,
+                  )));
             }
           },
         );

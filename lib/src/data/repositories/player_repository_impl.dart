@@ -1,18 +1,20 @@
 import 'package:fogooo/src/core/resources/data_state.dart';
 import 'package:fogooo/src/data/datasource/local/local_preferences.dart';
 import 'package:fogooo/src/data/datasource/remote/supabase_handler.dart';
+import 'package:fogooo/src/data/mappers/history_mapper.dart';
 import 'package:fogooo/src/data/mappers/player_mapper.dart';
 import 'package:fogooo/src/domain/entities/player_entity.dart';
+import 'package:fogooo/src/domain/entities/user_history_entity.dart';
 import 'package:fogooo/src/domain/repositories/player_repository.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:tuple/tuple.dart';
 
 class PlayerRepositoryImpl implements PlayerRepository {
   final SupabaseHandler _supabaseHandler;
   final PlayerMapper _playerMapper;
+  final HistoryMapper _historyMapper;
   final LocalPreferences _localPreferences;
-  PlayerRepositoryImpl(
-      this._supabaseHandler, this._playerMapper, this._localPreferences);
+  PlayerRepositoryImpl(this._supabaseHandler, this._playerMapper,
+      this._historyMapper, this._localPreferences);
 
   @override
   Future<DataState<List<Player>>> getAllPlayers() async {
@@ -85,9 +87,9 @@ class PlayerRepositoryImpl implements PlayerRepository {
 
     var result = await _localPreferences.addPlayerGuesses(playerModel);
     if (result) {
-      return DataSucess(true);
+      return const DataSucess(true);
     } else {
-      return DataFailed(Tuple2(
+      return DataFailed(const Tuple2(
           "Erro ao adicionar jogador, tente novamente mais tarde",
           StackTrace.empty));
     }
@@ -97,5 +99,35 @@ class PlayerRepositoryImpl implements PlayerRepository {
   Future<List<Player>> getPlayerGuesses() async {
     var result = _localPreferences.getPlayersGuesses();
     return result.map((e) => _playerMapper.modelToEntity(e)).toList();
+  }
+
+  @override
+  UserHistory getUserHistory() {
+    return _historyMapper.modelToEntity(_localPreferences.getUserHistory());
+  }
+
+  @override
+  Future<bool> setUserHistory(UserHistory userHistory) async {
+    return await _localPreferences
+        .setUserHistory(_historyMapper.entityToModel(userHistory));
+  }
+
+  @override
+  Future<bool> sendFeedback(Tuple4<String, String, String, String> data) async {
+    var res = await _supabaseHandler.sendFeedback(data);
+    if (res.isLeft) {
+      return true;
+    }
+    return false;
+  }
+
+  @override
+  Future<int> getOrderNumber() async {
+    var res = await _supabaseHandler.getOrderNumber();
+    if (res.isLeft) {
+      return res.left;
+    } else {
+      return -1;
+    }
   }
 }

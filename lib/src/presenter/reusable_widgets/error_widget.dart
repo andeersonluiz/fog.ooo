@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class CustomErrorWidget extends StatelessWidget {
@@ -26,15 +25,15 @@ class CustomErrorWidget extends StatelessWidget {
                     child: Text(
                       msg,
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 35, color: Colors.white),
+                      style: const TextStyle(fontSize: 35, color: Colors.white),
                     ),
                   ),
                   Container(
                       padding: const EdgeInsets.all(8.0),
-                      constraints: BoxConstraints(maxHeight: 500),
+                      constraints: const BoxConstraints(maxHeight: 500),
                       child: Image.asset("assets/biriba_triste.jpeg")),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
                     child: Text(
                       "Biriba está triste",
                       textAlign: TextAlign.center,

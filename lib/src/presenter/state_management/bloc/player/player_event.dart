@@ -9,7 +9,6 @@ class PlayerEvent extends Equatable {
     this.player,
   });
   @override
-  // TODO: implement props
   List<Object> get props => [player ?? ""];
 }
 
@@ -19,4 +18,8 @@ class AddPlayerGuessEvent extends PlayerEvent {
 
 class LoadDataEvent extends PlayerEvent {
   const LoadDataEvent();
+}
+
+class FinishedPlayerEvent extends PlayerEvent {
+  const FinishedPlayerEvent();
 }

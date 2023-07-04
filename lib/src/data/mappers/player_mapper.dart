@@ -26,6 +26,7 @@ class PlayerMapper implements Mapper<Player, PlayerModel> {
         imageUrl: entity.imageUrl,
         infoUrl: entity.infoUrl,
         matches: entity.matches,
+        playedTeam: entity.playedTeam,
         nationality: NationalityModel(
             id: entity.nationality.id,
             country: entity.nationality.country,
@@ -53,6 +54,7 @@ class PlayerMapper implements Mapper<Player, PlayerModel> {
         goals: model.goals,
         imageUrl: model.imageUrl,
         infoUrl: model.infoUrl,
+        playedTeam: model.playedTeam,
         matches: model.matches,
         nationality: Nationality(
             id: model.nationality.id,
